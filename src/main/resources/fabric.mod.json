@@ -3,24 +3,23 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "",
   "authors": [
-    "Me!"
+    "Rempler"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/remplerus/jagahm-mv"
   },
   "license": "CC0-1.0",
-  "icon": "assets/template/icon.png",
+  "icon": "",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.example.TemplateMod"
+      "com.rempler.jagahm.JAGAHM"
     ]
   },
   "mixins": [
-    "template.mixins.json"
+    "jagahm.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16",

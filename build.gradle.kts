@@ -4,7 +4,7 @@ plugins {
 //    id("me.modmuss50.mod-publish-plugin")
 }
 
-version = "${property("mod.version")}+${stonecutter.current.version}"
+version = "${property("mod.version")}-${property("mod_loader")}-${stonecutter.current.version}"
 base.archivesName = property("mod.id") as String
 
 repositories {

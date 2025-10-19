@@ -1,17 +1,18 @@
-package com.example;
+package com.rempler.jagahm;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateMod implements ModInitializer {
+public class JAGAHM implements ModInitializer {
     // This logger is used to write text to the console and the log file.
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger("template");
-    public static final String VERSION = /*$ mod_version*/ "0.1.0";
-    public static final String MINECRAFT = /*$ minecraft*/ "1.21.9";
+    public static final Logger LOGGER = LoggerFactory.getLogger(JAGAHM.MODID);
+    public static final String VERSION = /*$ mod_version*/ "2.0.0";
+    public static final String MINECRAFT = /*$ minecraft*/ "1.21.10";
+    public static final String MODID = "jagahm";
 
     @Override
     public void onInitialize() {
