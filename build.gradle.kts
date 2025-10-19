@@ -18,6 +18,7 @@ repositories {
     }
     strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
+    strictMaven("https://maven.shedaniel.me", "Shedaniel", "me.shedaniel.cloth")
 }
 
 dependencies {
@@ -32,6 +33,9 @@ dependencies {
     minecraft("com.mojang:minecraft:${stonecutter.current.version}")
     mappings("net.fabricmc:yarn:${property("deps.yarn")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${property("deps.cloth_config")}") {
+        exclude("net.fabricmc.fabric-api")
+    }
 
     fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
 }
@@ -116,11 +120,11 @@ publishMods {
     }
 }
 */
-/*
+
 publishing {
     repositories {
-        maven("...") {
-            name = "..."
+        maven("https://maven.rempler.com:42069/releases") {
+            name = "RemplersRepo"
             credentials(PasswordCredentials::class.java)
             authentication {
                 create<BasicAuthentication>("basic")
@@ -138,4 +142,3 @@ publishing {
         }
     }
 }
-*/
