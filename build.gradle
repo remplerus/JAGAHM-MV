@@ -1,0 +1,146 @@
+plugins {
+    id("java-library")
+    id("maven-publish")
+    id("net.neoforged.moddev") version "2.0.+"
+    id("idea")
+//    id("me.modmuss50.mod-publish-plugin")
+}
+
+version = "${property("mod_version")}-${property("mod_loader")}-${stonecutter.current.version}"
+base.archivesName = property("mod_id")
+
+java {
+    withSourcesJar()
+    targetCompatibility = property("java_version")
+    sourceCompatibility = property("java_version")
+}
+
+repositories {
+
+}
+
+dependencies {
+
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        // define mod <-> source bindings
+        // these are used to tell the game which sources are for which mod
+        // multi mod projects should define one per mod
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+tasks.register("buildAndCollect") {
+    dependsOn("build")
+    // Builds the version into a shared folder in `build/libs/${mod version}/`
+    doLast {
+        group = "build"
+        //from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
+        into("../../libs/${project.property("mod_version")}")
+    }
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+    minecraft_version      : minecraft_version,
+    minecraft_version_range: minecraft_version_range,
+    neo_version            : neo_version,
+    loader_version_range   : loader_version_range,
+    mod_id                 : mod_id,
+    mod_name               : mod_name,
+    mod_license            : mod_license,
+    mod_version            : mod_version,
+    mod_authors            : mod_authors,
+    mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+            expand replaceProperties
+            from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+/*
+publishMods {
+    file = tasks.remapJar.map { it.archiveFile.get() }
+    additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
+    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
+    version = property("mod.version") as String
+    changelog = rootProject.file("CHANGELOG.md").readText()
+    type = STABLE
+    modLoaders.add("fabric")
+
+    dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
+        || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+
+    modrinth {
+        projectId = property("publish.modrinth") as String
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(stonecutter.current.version)
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    curseforge {
+        projectId = property("publish.curseforge") as String
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(stonecutter.current.version)
+        requires {
+            slug = "fabric-api"
+        }
+    }
+}
+*/
+
+publishing {
+    repositories {
+        maven {
+            name = "RemplersRepo"
+            url = "https://maven.rempler.com:42069/releases/"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+
+    publications {
+        register('mavenJava', MavenPublication) {
+            groupId "${property("mod_group_id")}.${property("mod_id")}"
+            artifactId property("mod_version")
+            version stonecutter.current.version
+            from components.java
+        }
+    }
+}
