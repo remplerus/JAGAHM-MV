@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     id("maven-publish")
-    id("net.neoforged.moddev") version "2.0.+"
+    id("net.minecraftforge.gradle") version "[6.0,6.2)"
     id("idea")
 //    id("me.modmuss50.mod-publish-plugin")
 }
@@ -20,75 +20,82 @@ repositories {
 }
 
 dependencies {
-
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 }
 
-neoForge {
-    version = project.neo_version
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
 
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
     runs {
         client {
-            client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            property 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
-            server()
-            programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            args '--nogui'
+            property 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-            logLevel = org.slf4j.event.Level.DEBUG
-        }
-    }
-
-    mods {
-        // define mod <-> source bindings
-        // these are used to tell the game which sources are for which mod
-        // multi mod projects should define one per mod
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', project.mod_id
+            mods {
+                "${project.mod_id}" {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
 
-tasks.register("buildAndCollect") {
+tasks.register('buildAndCollect', Copy) {
     dependsOn("build")
     // Builds the version into a shared folder in `build/libs/${mod version}/`
-    doLast {
-        group = "build"
-        //from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
-        into("../../libs/${project.property("mod_version")}")
+    from(tasks.named("reobfJar"))
+    into("../../libs/${project.property("mod_loader")}/${project.property("mod_version")}")
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
 }
 
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [
-    minecraft_version      : minecraft_version,
-    minecraft_version_range: minecraft_version_range,
-    neo_version            : neo_version,
-    loader_version_range   : loader_version_range,
-    mod_id                 : mod_id,
-    mod_name               : mod_name,
-    mod_license            : mod_license,
-    mod_version            : mod_version,
-    mod_authors            : mod_authors,
-    mod_description        : mod_description
-    ]
-    inputs.properties replaceProperties
-            expand replaceProperties
-            from "src/main/templates"
-    into "build/generated/sources/modMetadata"
+// Example for how to get properties into the manifest for reading at runtime.
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1', // We are version 1 of ourselves
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
+    // This is the preferred method to reobfuscate your jar file
+    finalizedBy 'reobfJar'
 }
 
-sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 /*
 publishMods {
