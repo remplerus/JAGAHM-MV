@@ -9,21 +9,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.BonemealEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-//? if <1.21 {
+//? if <1.20.6 {
 /*import net.neoforged.neoforge.event.TickEvent;*/
 //? } else {
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 //? }
 
 public class JAGAHMEvents {
-    //? if <1.21 {
+    //? if <1.20.6 {
     /*public static void playerTickEvent(TickEvent.PlayerTickEvent event) {
         Level level = event.player.level();
         Player player = event.player;*/
     //? } else {
-    public static void playerTickEvent(PlayerTickEvent event) {
-        Level level = event.getEntity().level();
+    public static void playerTickEvent(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
+        Level level = player.level();
     //? }
         if (player.isShiftKeyDown() || player.isSprinting()) {
             if (Config.shouldTwerk() && level.getRandom().nextDouble() < Config.getRandomSpeed() && JAGAHM.tickCounter >= Config.getGrowSpeed()) {
@@ -59,7 +59,7 @@ public class JAGAHMEvents {
 
     public static void onBonemealEvent(BonemealEvent event) {
         if (event.getStack().is(JAGAHM.POOP.get())) {
-            //? if <1.21 {
+            //? if <1.20.6 {
             /*if (!(event.getBlock().is(BlockTags.CROPS) || event.getBlock().is(BlockTags.SAPLINGS) || event.getBlock().is(JAGAHM.WHITELIST))) {*/
             //? } else {
             if (!(event.getState().is(BlockTags.CROPS) || event.getState().is(BlockTags.SAPLINGS) || event.getState().is(JAGAHM.WHITELIST))) {

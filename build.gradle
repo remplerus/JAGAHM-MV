@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
     id("net.neoforged.moddev") version "2.0.+"
     id("idea")
-//    id("me.modmuss50.mod-publish-plugin")
+    id("me.modmuss50.mod-publish-plugin") version "1.1.0"
 }
 
 stonecutter {
@@ -14,7 +14,10 @@ stonecutter {
 }
 
 version = "${property("mod_version")}-${property("mod_loader")}-${stonecutter.current.version}"
-base.archivesName = property("mod_id")
+group = mod_group_id
+base {
+    archivesName = mod_id
+}
 
 java {
     withSourcesJar()
@@ -59,7 +62,7 @@ neoForge {
         // define mod <-> source bindings
         // these are used to tell the game which sources are for which mod
         // multi mod projects should define one per mod
-        "jagahm" {
+        "${mod_id}" {
             sourceSet(sourceSets.main)
         }
     }
@@ -70,7 +73,7 @@ tasks.register("buildAndCollect") {
     // Builds the version into a shared folder in `build/libs/${mod version}/`
     doLast {
         group = "build"
-        //from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
+        //from(jar.map { it.archiveFile })
         into("../../libs/${project.property("mod_version")}")
     }
 }
@@ -90,22 +93,20 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     ]
     inputs.properties replaceProperties
             expand replaceProperties
-            from "src/main/templates"
+            from "../../src/main/templates"
     into "build/generated/sources/modMetadata"
 }
 
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 
-/*
 publishMods {
-    file = tasks.remapJar.map { it.archiveFile.get() }
-    additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
-    version = property("mod.version") as String
-    changelog = rootProject.file("CHANGELOG.md").readText()
+    file = jar.archiveFile.get()
+    displayName = "${property("mod_name")} ${property("mod_version")} for ${stonecutter.current.version}"
+    version = property("mod_version") as String
+    changelog = rootProject.file("CHANGELOG.md").getText()
     type = STABLE
-    modLoaders.add("fabric")
+    modLoaders.add("neoforge")
 
     dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
         || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
@@ -114,27 +115,20 @@ publishMods {
         projectId = property("publish.modrinth") as String
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
-        requires {
-            slug = "fabric-api"
-        }
     }
 
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
-        requires {
-            slug = "fabric-api"
-        }
     }
 }
-*/
 
 publishing {
     repositories {
         maven {
             name = "RemplersRepo"
-            url = "https://maven.rempler.com:42069/releases/"
+            url = "https://maven.rempler.com/releases/"
             credentials(PasswordCredentials)
             authentication {
                 basic(BasicAuthentication)
@@ -144,8 +138,8 @@ publishing {
 
     publications {
         register('mavenJava', MavenPublication) {
-            groupId "${property("mod_group_id")}.${property("mod_id")}"
-            artifactId property("mod_version")
+            groupId "${property("mod_group_id")}.${property("mod_loader")}"
+            artifactId "${property("mod_id")}-${property("mod_loader")}-${property("mod_version")}"
             version stonecutter.current.version
             from components.java
         }

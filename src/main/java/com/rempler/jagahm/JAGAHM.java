@@ -38,7 +38,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//? if <1.21 {
+//? if <1.21.3 {
 /*import net.neoforged.fml.ModLoadingContext;
 import net.minecraft.server.level.ServerPlayer;*/
 //? }
@@ -57,7 +57,7 @@ public class JAGAHM {
     public static int fartCounter = 0;
 
     public JAGAHM(IEventBus eventBus, ModContainer modContainer) {
-        //? if <1.21 {
+        //? if <1.20.6 {
         /*ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC, MOD_ID + ".toml");*/
         //? } else {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, MOD_ID + ".toml");
@@ -91,7 +91,7 @@ public class JAGAHM {
 
     public static void dropStacks(BlockState state, ServerLevel level, BlockPos pos, Entity entity,
                                   ItemStack toolStack) {
-        //? if <1.21 {
+        //? if <1.21.3 {
         /*Item replant = state.getBlock().getCloneItemStack(level, pos, state).getItem();*/
         //? } else {
         Item replant = state.getBlock().getCloneItemStack(level, pos, state, true, null).getItem();
@@ -183,7 +183,7 @@ public class JAGAHM {
         double d0 = level.getRandom().nextDouble();
         for (int a = 0; a < 2; a++) {
             //TODO: make custom particle
-            //? if <1.21 {
+            //? if <1.21.3 {
             /*((ServerLevel) level).sendParticles((ServerPlayer) player, ParticleTypes.CLOUD, false, blockPos.getX() + d0,
                     blockPos.getY() + d0, blockPos.getZ() + d0, 1, 0.5, 0.5, 0.5, 0.01);*/
             //? } else {
@@ -233,7 +233,7 @@ public class JAGAHM {
             for (int j = state.getValue(SugarCaneBlock.AGE); j <= 15; j++) {
                 if (j == 15) {
                     ((Level) level).setBlockAndUpdate(blockPos.above(), state.setValue(SugarCaneBlock.AGE, 0));
-                    //? if <1.21 {
+                    //? if <1.20.6 {
                     /*net.neoforged.neoforge.common.CommonHooks.onCropsGrowPost((Level) level, blockPos.above(), state);*/
                     //? } else {
                     net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost((Level) level, blockPos.above(), state);

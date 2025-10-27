@@ -4,7 +4,7 @@ license="${mod_license}"
 
 [[mods]]
 modId="jagahm"
-version="${mod_version}"
+version="2.0.0"
 displayName="${mod_name}"
 authors="${mod_authors}"
 description='''${mod_description}'''
