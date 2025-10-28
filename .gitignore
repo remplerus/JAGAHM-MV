@@ -32,6 +32,9 @@ bin/
 
 run/
 
+# froge
+versions/*/src
+
 # java
 
 hs_err_*.log

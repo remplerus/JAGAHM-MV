@@ -1,0 +1,13 @@
+{
+  "fart": {
+    "category": "players",
+    "subtitle": "jagahm.fart.subtitle",
+    "sounds": [
+      "jagahm:fart",
+      "jagahm:longfart",
+      "jagahm:xtralongfart",
+      "jagahm:shortfart",
+      "jagahm:hardfart"
+    ]
+  }
+}
