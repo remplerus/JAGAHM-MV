@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ServerPlayerInteractionManagerMixin {
     @Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
     private void onInteractBlock(ServerPlayerEntity player, World level, ItemStack stack, Hand hand, BlockHitResult result, CallbackInfoReturnable<ActionResult> cir) {
-        ActionResult interactionResult = JAGAHM.onRightClick(player, hand, player.getEntityWorld(), result);
+        ActionResult interactionResult = JAGAHM.onRightClick(player, hand, /*? if >1.21.5 && <1.21.9 {*//*player.getWorld()*//*?}else{*/player.getEntityWorld()/*?}*/, result);
 
         if (interactionResult != ActionResult.PASS) {
             cir.setReturnValue(interactionResult);

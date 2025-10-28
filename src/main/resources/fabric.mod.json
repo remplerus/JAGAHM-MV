@@ -16,13 +16,18 @@
   "entrypoints": {
     "main": [
       "com.rempler.jagahm.JAGAHM"
+    ],
+    "client": [
+      "com.rempler.jagahm.JAGAHMClient"
     ]
   },
   "mixins": [
     "jagahm.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16",
-    "minecraft": "${minecraft}"
+    "fabricloader": ">=0.17",
+    "minecraft": "${minecraft}",
+    "fabric-api": "${fapi}",
+    "cloth-config": "${cloth}"
   }
 }

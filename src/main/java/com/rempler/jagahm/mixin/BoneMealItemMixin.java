@@ -19,7 +19,7 @@ public class BoneMealItemMixin {
     @Inject(method = "useOnFertilizable", at = @At("HEAD"), cancellable = true)
     private static void onUseOnFertilizable(ItemStack stack, World level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         BlockState blockState = level.getBlockState(pos);
-        if (stack.isOf(Items.BONE_MEAL)) { //TODO: Check if this works
+        if (stack.isOf(ModItems.POOP)) { //TODO: Check if this works
             if (!(blockState.isIn(BlockTags.CROPS) || blockState.isIn(BlockTags.SAPLINGS) || blockState.isIn(JAGAHM.WHITELIST))) {
                 cir.setReturnValue(false);
             }

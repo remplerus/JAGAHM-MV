@@ -16,7 +16,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Inject(method = "interactBlockInternal", at = @At("HEAD"), cancellable = true)
     private void onInteractBlockInternal(ClientPlayerEntity localPlayer, Hand interactionHand, BlockHitResult result, CallbackInfoReturnable<ActionResult> cir) {
-        ActionResult interactionResult = JAGAHM.onRightClick(localPlayer, interactionHand, localPlayer.getEntityWorld(), result);
+        ActionResult interactionResult = JAGAHM.onRightClick(localPlayer, interactionHand, /*? if >1.21.5 && <1.21.9 {*//*localPlayer.getWorld()*//*?}else{*/localPlayer.getEntityWorld()/*?}*/, result);
 
         if (interactionResult != ActionResult.PASS) {
             cir.setReturnValue(interactionResult);

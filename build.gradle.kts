@@ -37,7 +37,8 @@ dependencies {
         exclude("net.fabricmc.fabric-api")
     }
 
-    fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    //fapi("fabric-api-base", "fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0", "fabric-item-api-v1", "fabric-sound-api-v1")
 }
 
 loom {
@@ -68,12 +69,16 @@ tasks {
         inputs.property("name", project.property("mod.name"))
         inputs.property("version", project.property("mod.version"))
         inputs.property("minecraft", project.property("mod.mc_dep"))
+        inputs.property("fapi", project.property("deps.fabric_api"))
+        inputs.property("cloth", project.property("deps.cloth_config"))
 
         val props = mapOf(
             "id" to project.property("mod.id"),
-            "name" to project.property("mod.id"),
-            "version" to project.property("mod.id"),
-            "minecraft" to project.property("mod.mc_dep")
+            "name" to project.property("mod.name"),
+            "version" to project.property("mod.version"),
+            "minecraft" to project.property("mod.mc_dep"),
+            "fapi" to project.property("deps.fabric_api"),
+            "cloth" to project.property("deps.cloth_config")
         )
 
         filesMatching("fabric.mod.json") { expand(props) }
@@ -123,7 +128,7 @@ publishMods {
 
 publishing {
     repositories {
-        maven("https://maven.rempler.com:42069/releases") {
+        maven("https://maven.rempler.com/releases") {
             name = "RemplersRepo"
             credentials(PasswordCredentials::class.java)
             authentication {
@@ -134,8 +139,8 @@ publishing {
 
     publications {
         create<MavenPublication>("mavenJava") {
-            groupId = "${property("mod.group")}.${property("mod.id")}"
-            artifactId = property("mod.version") as String
+            groupId = "${property("mod.group")}.${property("mod_loader")}"
+            artifactId = "${property("mod.id")}-${property("mod_loader")}-${property("mod.version")}"
             version = stonecutter.current.version
 
             from(components["java"])

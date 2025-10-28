@@ -11,6 +11,7 @@ import net.minecraft.block.Fertilizable;
 import net.minecraft.block.NetherWartBlock;
 import net.minecraft.block.SugarCaneBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BoneMealItem;
 import net.minecraft.item.Item;
@@ -33,7 +34,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-//? if <1.21 {
+//? if <1.21.5 {
 /*import net.minecraft.server.network.ServerPlayerEntity;*/
 //? }
 
@@ -166,7 +167,7 @@ public class JAGAHM implements ModInitializer {
     public static void spawnParticles(PlayerEntity player, ServerWorld level, BlockPos blockPos) {
         double d0 = level.getRandom().nextDouble();
         for (int a = 0; a < 2; a++) {
-            //? if <1.21 {
+            //? if <1.21.3 {
             /*level.spawnParticles((ServerPlayerEntity) player, ParticleTypes.CLOUD, false, blockPos.getX() + d0,
                     blockPos.getY() + d0, blockPos.getZ() + d0, 1, 0.5, 0.5, 0.5, 0.01);;*/
             //?} else {
@@ -177,7 +178,11 @@ public class JAGAHM implements ModInitializer {
     }
 
     public static void applyGrowing(PlayerEntity player) {
+        //? if >1.21.5 && <1.21.9 {
+        /*World level = player.getWorld();*/
+        //? } else {
         World level = player.getEntityWorld();
+        //? }
         BlockPos pos = player.getBlockPos();
 
         if (level.isClient()) {
@@ -194,7 +199,8 @@ public class JAGAHM implements ModInitializer {
                     BlockPos blockPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
                     if (serverWorld.getRandom().nextDouble() < ModConfig.getRandomSpeed()) {
                         BlockState state = serverWorld.getBlockState(blockPos);
-                        if (!(state.getBlock() instanceof AirBlock || state.isIn(BLACKLIST))) {
+                        if (!(state.getBlock() instanceof AirBlock ||
+                                state.isIn(BLACKLIST))) {
                                 standardGrow(player, serverWorld, blockPos, state);
                         }
                     }
@@ -233,6 +239,23 @@ public class JAGAHM implements ModInitializer {
     public static void spawnParticles(PlayerEntity player, WorldAccess level, BlockPos blockPos) {
         if (ModConfig.shouldSpawnParticles()) {
             spawnParticles(player, (ServerWorld) level, blockPos);
+        }
+    }
+
+    public static void doPooping(World level, PlayerEntity player) {
+        if (ModConfig.shouldPoopSpawn()) {
+            JAGAHM.fartCounter++;
+            if (JAGAHM.fartCounter > 200) {
+                if (level.getRandom().nextInt() * 200 <= JAGAHM.fartCounter) {
+                    JAGAHM.hasPlayedSound = true;
+                }
+                if (JAGAHM.hasPlayedSound) {
+                    level.spawnEntity(new ItemEntity(level, player.getX(), player.getY(), player.getZ(), new ItemStack(ModItems.POOP))); //TODO: Check if this works
+                    JAGAHM.fartCounter = 0;
+                    JAGAHMClient.doPoops(level, player);
+                    JAGAHM.hasPlayedSound = false;
+                }
+            }
         }
     }
 }
