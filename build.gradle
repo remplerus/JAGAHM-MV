@@ -108,18 +108,18 @@ publishMods {
     type = STABLE
     modLoaders.add("neoforge")
 
-    dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
-        || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+    dryRun = providers.gradleProperty("MODRINTH_TOKEN").getOrNull() == null
+        || providers.gradleProperty("CURSEFORGE_TOKEN").getOrNull() == null
 
     modrinth {
         projectId = property("publish.modrinth") as String
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = providers.gradleProperty("MODRINTH_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
     }
 
     curseforge {
         projectId = property("publish.curseforge") as String
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        accessToken = providers.gradleProperty("CURSEFORGE_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
     }
 }
