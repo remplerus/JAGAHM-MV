@@ -1,7 +1,7 @@
 plugins {
     `maven-publish`
     id("fabric-loom")
-//    id("me.modmuss50.mod-publish-plugin")
+    id("me.modmuss50.mod-publish-plugin") version("1.1.+")
 }
 
 version = "${property("mod.version")}-${property("mod_loader")}-${stonecutter.current.version}"
@@ -93,7 +93,6 @@ tasks {
     }
 }
 
-/*
 publishMods {
     file = tasks.remapJar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
@@ -103,12 +102,12 @@ publishMods {
     type = STABLE
     modLoaders.add("fabric")
 
-    dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
-        || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+    dryRun = providers.gradleProperty("MODRINTH_TOKEN").getOrNull() == null
+        || providers.gradleProperty("CURSEFORGE_TOKEN").getOrNull() == null
 
     modrinth {
         projectId = property("publish.modrinth") as String
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = providers.gradleProperty("MODRINTH_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
         requires {
             slug = "fabric-api"
@@ -117,14 +116,13 @@ publishMods {
 
     curseforge {
         projectId = property("publish.curseforge") as String
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        accessToken = providers.gradleProperty("CURSEFORGE_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
         requires {
             slug = "fabric-api"
         }
     }
 }
-*/
 
 publishing {
     repositories {
