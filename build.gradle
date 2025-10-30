@@ -7,10 +7,16 @@ plugins {
 }
 
 stonecutter {
-    def agricraft = property("agricraft_version") != null
-    constants["agricraft"] = agricraft
-    def mysticalagriculture = property("mysticalagriculture_version") != null
-    constants["mysticalagriculture"] = mysticalagriculture
+    constants["agricraft"] = false
+    constants["mysticalagriculture"] = false
+    if(project.hasProperty("agricraft_version")) {
+        def agricraft = property("agricraft_version") != ""
+        constants["agricraft"] = agricraft
+    }
+    if(project.hasProperty("mysticalagriculture_version") && project.hasProperty("cucumber_version")) {
+        def mysticalagriculture = property("mysticalagriculture_version") != ""
+        constants["mysticalagriculture"] = mysticalagriculture
+    }
 }
 
 version = "${property("mod_version")}-${property("mod_loader")}-${stonecutter.current.version}"
@@ -26,11 +32,28 @@ java {
 }
 
 repositories {
-
+    maven {
+        url 'https://maven.blakesmods.com'
+    }
+    maven {
+        url 'https://cursemaven.com'
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    if(project.hasProperty("mysticalagriculture_version") && project.hasProperty("cucumber_version")) {
+        implementation "com.blakebr0.cucumber:Cucumber:$stonecutter.current.version-${property("cucumber_version")}"
+        implementation "com.blakebr0.mysticalagriculture:MysticalAgriculture:$stonecutter.current.version-${property("mysticalagriculture_version")}"
+    }
+    if(project.hasProperty("agricraft_version")) {
+        implementation "curse.maven:agricraft-225635:${property("agricraft_version")}"
+        if(project.property("minecraft_version") >= "1.20.1") {
+            implementation "curse.maven:rfc-714059:${property("rfc_version")}"
+        } else {
+            implementation "curse.maven:infinitylib-251396:${property("infinitylib_version")}"
+        }
+    }
 }
 
 minecraft {
@@ -49,6 +72,8 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            //property 'mixin.env.remapRefMap', 'true'
+            //property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 "${project.mod_id}" {
                     source sourceSets.main

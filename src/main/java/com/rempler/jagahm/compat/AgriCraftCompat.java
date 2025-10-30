@@ -1,12 +1,25 @@
 package com.rempler.jagahm.compat;
 
 import com.rempler.jagahm.Config;
+import com.rempler.jagahm.JAGAHM;
+import java.util.Optional;
+
+//? if agricraft {
+    //? > 1.18.2 {
+import com.agricraft.agricraft.api.AgriApi;
+import com.agricraft.agricraft.api.crop.AgriCrop;
+    //? } else {
+/*import com.infinityraider.agricraft.api.v1.AgriApi;
+import com.infinityraider.agricraft.api.v1.crop.IAgriCrop;*/
+    //? }
+//? }
+
 //? if > 1.16.5 {
 import net.minecraft.core.BlockPos;
 //? if >1.18.2 {
 import net.minecraft.util.RandomSource;
 //?} else {
-import java.util.Random;
+/*import java.util.Random;*/
 //?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -30,19 +43,28 @@ public class AgriCraftCompat {
     //? } else {
     /*public static void initAgriCompat(World level, BlockPos blockPos, PlayerEntity player) {*/
     //? }
-        //? if !agricraft {
-        /*Optional<AgriCrop> optional = AgriApi.getCrop(level, blockPos);
+        //? if agricraft {
+            //? if > 1.18.2 {
+        Optional<AgriCrop> optional = AgriApi.getCrop(level, blockPos);
         if (optional.isPresent()) {
             AgriCrop crop = optional.get();
             if (rand.nextDouble() < Config.getGrowSpeed()*Config.getRandomSpeed()) {
                 if (!crop.isFertile() && !Config.shouldCheckFertile()) {
                     crop.setGrowthStage(crop.getGrowthStage().getNext(crop, rand));
+            //? } else {
+        /*Optional<IAgriCrop> optional = AgriApi.getCrop(level, blockPos);
+        if (optional.isPresent()) {
+            IAgriCrop crop = optional.get();
+            if (rand.nextDouble() < Config.getGrowSpeed()*Config.getRandomSpeed()) {
+                if (!crop.isFertile() && !Config.shouldCheckFertile()) {
+                    crop.setGrowthStage(crop.getGrowthStage().getNextStage(crop, rand));*/
+            //? }
                 } else {
                     crop.applyGrowthTick();
-                    JAGAHMNeo.spawnParticles(player, level, blockPos);
+                    JAGAHM.spawnParticles(player, level, blockPos);
                 }
             }
-        }*/
-        //?}
+        }
+        //? }
     }
 }

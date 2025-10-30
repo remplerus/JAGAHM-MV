@@ -62,6 +62,10 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.RegistryObject;*/
 //? }
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -69,22 +73,22 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
+import com.rempler.jagahm.compat.AgriCraftCompat;
+import com.rempler.jagahm.compat.MysticalAgriCompat;
 
 @SuppressWarnings("removal")
 @Mod(JAGAHM.MOD_ID)
 public class JAGAHM {
     public static final String MOD_ID = "jagahm";
     public static final String MOD_NAME = "JAGAHM";
-    public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
     //? if >1.16.5 {
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
     public static final TagKey<Block> WHITELIST = TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), rl("whitelist"));
     public static final TagKey<Block> BLACKLIST = TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), rl("blacklist"));
     //? } else {
     /*public static final Tags.IOptionalNamedTag<Block> WHITELIST = BlockTags.createOptional(rl("whitelist"));
-    public static final Tags.IOptionalNamedTag<Block> BLACKLIST = BlockTags.createOptional(rl("blacklist"));*/
+    public static final Tags.IOptionalNamedTag<Block> BLACKLIST = BlockTags.createOptional(rl("blacklist"));
+    public static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();*/
     //? }
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final RegistryObject<PoopItem> POOP = ITEMS.register("poop", PoopItem::new);
@@ -310,6 +314,10 @@ public class JAGAHM {
                     break;
                 }
             }
+        } else if (ModList.get().isLoaded("agricraft")) {
+            AgriCraftCompat.initAgriCompat(/*? if >1.16.5 {*/(Level)/*?}*/ level, blockPos, player);
+        } else if (ModList.get().isLoaded("mysticalagriculture")) {
+            MysticalAgriCompat.initMysticalAgriCompat(/*? if >1.16.5 {*/(Level)/*?}*/ level, blockPos, state, player);
         }
     }
 
