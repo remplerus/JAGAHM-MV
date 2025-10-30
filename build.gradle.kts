@@ -22,14 +22,6 @@ repositories {
 }
 
 dependencies {
-    /**
-     * Fetches only the required Fabric API modules to not waste time downloading all of them for each version.
-     * @see <a href="https://github.com/FabricMC/fabric">List of Fabric API modules</a>
-     */
-    fun fapi(vararg modules: String) {
-        for (it in modules) modImplementation(fabricApi.module(it, property("deps.fabric_api") as String))
-    }
-
     minecraft("com.mojang:minecraft:${stonecutter.current.version}")
     mappings("net.fabricmc:yarn:${property("deps.yarn")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
@@ -38,10 +30,14 @@ dependencies {
     }
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
-    //fapi("fabric-api-base", "fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0", "fabric-item-api-v1", "fabric-sound-api-v1")
 }
 
 loom {
+    @Suppress("UnstableApiUsage")
+    mixin {
+        this.defaultRefmapName.set("${property("mod.id")}.refmap.json")
+        useLegacyMixinAp = false
+    }
     decompilerOptions.named("vineflower") {
         options.put("mark-corresponding-synthetics", "1") // Adds names to lambdas - useful for mixins
     }
