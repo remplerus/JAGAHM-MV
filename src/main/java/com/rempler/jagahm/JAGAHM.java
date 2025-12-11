@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
@@ -42,6 +41,11 @@ import org.slf4j.LoggerFactory;
 /*import net.neoforged.fml.ModLoadingContext;
 import net.minecraft.server.level.ServerPlayer;*/
 //? }
+//? if < 1.21.11 {
+import net.minecraft.resources.ResourceLocation;
+//? } else {
+/*import net.minecraft.resources.Identifier;*/
+//? }
 
 @Mod(JAGAHM.MOD_ID)
 public class JAGAHM {
@@ -69,9 +73,11 @@ public class JAGAHM {
         ITEMS.register(eventBus);
     }
 
-    public static ResourceLocation rl(String name) {
+    public static /*? if <1.21.11 {*/ResourceLocation/*? } else { *//*Identifier*//*?}*/ rl(String name) {
         //? if <1.21 {
         /*return new ResourceLocation(MOD_ID, name);*/
+        //? } else if >=1.21.11 {
+        /*return Identifier.fromNamespaceAndPath(MOD_ID, name);*/
         //? } else {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
         //? }
