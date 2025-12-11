@@ -6,8 +6,8 @@ import java.util.Optional;
 
 //? if agricraft {
     //? > 1.18.2 {
-import com.agricraft.agricraft.api.AgriApi;
-import com.agricraft.agricraft.api.crop.AgriCrop;
+/*import com.agricraft.agricraft.api.AgriApi;
+import com.agricraft.agricraft.api.crop.AgriCrop;*/
     //? } else {
 /*import com.infinityraider.agricraft.api.v1.AgriApi;
 import com.infinityraider.agricraft.api.v1.crop.IAgriCrop;*/
@@ -45,12 +45,12 @@ public class AgriCraftCompat {
     //? }
         //? if agricraft {
             //? if > 1.18.2 {
-        Optional<AgriCrop> optional = AgriApi.getCrop(level, blockPos);
+        /*Optional<AgriCrop> optional = AgriApi.getCrop(level, blockPos);
         if (optional.isPresent()) {
             AgriCrop crop = optional.get();
             if (rand.nextDouble() < Config.getGrowSpeed()*Config.getRandomSpeed()) {
                 if (!crop.isFertile() && !Config.shouldCheckFertile()) {
-                    crop.setGrowthStage(crop.getGrowthStage().getNext(crop, rand));
+                    crop.setGrowthStage(crop.getGrowthStage().getNext(crop, rand));*/
             //? } else {
         /*Optional<IAgriCrop> optional = AgriApi.getCrop(level, blockPos);
         if (optional.isPresent()) {
@@ -59,12 +59,12 @@ public class AgriCraftCompat {
                 if (!crop.isFertile() && !Config.shouldCheckFertile()) {
                     crop.setGrowthStage(crop.getGrowthStage().getNextStage(crop, rand));*/
             //? }
-                } else {
+                /*} else {
                     crop.applyGrowthTick();
                     JAGAHM.spawnParticles(player, level, blockPos);
                 }
             }
-        }
+        }*/
         //? }
     }
 }
