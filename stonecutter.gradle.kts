@@ -1,6 +1,6 @@
 plugins {
     id("dev.kikugie.stonecutter")
-    id("fabric-loom") version "1.11-SNAPSHOT" apply false
+    id("fabric-loom") version "1.13-SNAPSHOT" apply false
     id("me.modmuss50.mod-publish-plugin") version "1.1.+" apply false // Publishes builds to hosting websites
 }
 
