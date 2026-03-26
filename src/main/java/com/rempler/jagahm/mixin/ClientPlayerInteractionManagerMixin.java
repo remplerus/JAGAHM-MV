@@ -1,24 +1,24 @@
 package com.rempler.jagahm.mixin;
 
 import com.rempler.jagahm.JAGAHM;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 public class ClientPlayerInteractionManagerMixin {
 
-    @Inject(method = "interactBlockInternal", at = @At("HEAD"), cancellable = true)
-    private void onInteractBlockInternal(ClientPlayerEntity localPlayer, Hand interactionHand, BlockHitResult result, CallbackInfoReturnable<ActionResult> cir) {
-        ActionResult interactionResult = JAGAHM.onRightClick(localPlayer, interactionHand, /*? if >1.21.5 && <1.21.9 {*//*localPlayer.getWorld()*//*?}else{*/localPlayer.getEntityWorld()/*?}*/, result);
+    @Inject(method = "performUseItemOn", at = @At("HEAD"), cancellable = true)
+    private void onInteractBlockInternal(LocalPlayer localPlayer, InteractionHand interactionHand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir) {
+        InteractionResult interactionResult = JAGAHM.onRightClick(localPlayer, interactionHand, localPlayer.level(), result);
 
-        if (interactionResult != ActionResult.PASS) {
+        if (interactionResult != InteractionResult.PASS) {
             cir.setReturnValue(interactionResult);
             cir.cancel();
         }

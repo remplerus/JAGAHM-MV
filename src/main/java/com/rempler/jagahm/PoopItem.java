@@ -1,13 +1,13 @@
 package com.rempler.jagahm;
 
-import net.minecraft.item.BoneMealItem;
+import net.minecraft.world.item.BoneMealItem;
 
 public class PoopItem extends BoneMealItem {
     public PoopItem() {
-        this(new Settings().maxCount(64));
+        this(new Properties().stacksTo(64));
     }
 
-    public PoopItem(Settings settings) {
+    public PoopItem(Properties settings) {
         super(settings);
     }
 }

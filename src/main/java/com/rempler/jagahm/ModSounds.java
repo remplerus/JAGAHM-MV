@@ -1,9 +1,10 @@
 package com.rempler.jagahm;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
 public class ModSounds {
     public static final SoundEvent FART = registerSoundEvent("fart");
@@ -14,8 +15,8 @@ public class ModSounds {
 
     public static SoundEvent registerSoundEvent(String name) {
         Identifier soundID = JAGAHM.id(JAGAHM.MODID, name);
-        SoundEvent soundEvent = SoundEvent.of(soundID);
-        Registry.register(Registries.SOUND_EVENT, soundID, soundEvent);
+        SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundID);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, soundID, soundEvent);
         return soundEvent;
     }
 }

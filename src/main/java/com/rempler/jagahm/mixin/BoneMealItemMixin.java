@@ -2,13 +2,12 @@ package com.rempler.jagahm.mixin;
 
 import com.rempler.jagahm.JAGAHM;
 import com.rempler.jagahm.ModItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BoneMealItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BoneMealItem.class)
 public class BoneMealItemMixin {
-    @Inject(method = "useOnFertilizable", at = @At("HEAD"), cancellable = true)
-    private static void onUseOnFertilizable(ItemStack stack, World level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "growCrop", at = @At("HEAD"), cancellable = true)
+    private static void onUseOnFertilizable(ItemStack stack, Level level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         BlockState blockState = level.getBlockState(pos);
-        if (stack.isOf(ModItems.POOP)) { //TODO: Check if this works
-            if (!(blockState.isIn(BlockTags.CROPS) || blockState.isIn(BlockTags.SAPLINGS) || blockState.isIn(JAGAHM.WHITELIST))) {
+        if (stack.is(ModItems.POOP)) { //TODO: Check if this works
+            if (!(blockState.is(BlockTags.CROPS) || blockState.is(BlockTags.SAPLINGS) || blockState.is(JAGAHM.WHITELIST))) {
                 cir.setReturnValue(false);
             }
         }

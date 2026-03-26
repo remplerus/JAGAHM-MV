@@ -1,9 +1,9 @@
 package com.rempler.jagahm;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.world.World;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class JAGAHMClient implements ClientModInitializer {
     @Override
@@ -11,9 +11,9 @@ public class JAGAHMClient implements ClientModInitializer {
         ModSounds.registerModSounds();
     }
 
-    public static boolean doPoops(World level, PlayerEntity player) {
+    public static boolean doPoops(Level level, Player player) {
         if (ModConfig.shouldPoopSoundPlay()) {
-            level.playSound(player, player.getX(), player.getY(), player.getZ(), ModSounds.FART, SoundCategory.PLAYERS, 1.0f, 1.0f);
+            level.playSound(player, player.getX(), player.getY(), player.getZ(), ModSounds.FART, SoundSource.PLAYERS, 1.0f, 1.0f);
             return true;
         }
         return false;

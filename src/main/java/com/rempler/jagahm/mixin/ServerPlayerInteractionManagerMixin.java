@@ -1,25 +1,25 @@
 package com.rempler.jagahm.mixin;
 
 import com.rempler.jagahm.JAGAHM;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ServerPlayerInteractionManager.class)
+@Mixin(ServerPlayerGameMode.class)
 public class ServerPlayerInteractionManagerMixin {
-    @Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
-    private void onInteractBlock(ServerPlayerEntity player, World level, ItemStack stack, Hand hand, BlockHitResult result, CallbackInfoReturnable<ActionResult> cir) {
-        ActionResult interactionResult = JAGAHM.onRightClick(player, hand, /*? if >1.21.5 && <1.21.9 {*//*player.getWorld()*//*?}else{*/player.getEntityWorld()/*?}*/, result);
+    @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true)
+    private void onInteractBlock(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir) {
+        InteractionResult interactionResult = JAGAHM.onRightClick(player, hand, level, result);
 
-        if (interactionResult != ActionResult.PASS) {
+        if (interactionResult != InteractionResult.PASS) {
             cir.setReturnValue(interactionResult);
             cir.cancel();
         }

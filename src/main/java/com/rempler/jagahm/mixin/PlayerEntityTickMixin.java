@@ -1,44 +1,34 @@
 package com.rempler.jagahm.mixin;
 
 import com.rempler.jagahm.JAGAHM;
-import com.rempler.jagahm.JAGAHMClient;
 import com.rempler.jagahm.ModConfig;
-import com.rempler.jagahm.ModItems;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public class PlayerEntityTickMixin {
-    @Inject(method = "playerTick", at = @At("TAIL"))
+    @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo info) {
         onTick();
     }
 
     public void onTick() {
-        @SuppressWarnings("DataFlowIssue") ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
-        //? if >1.21.5 && <1.21.9 {
-        /*World level = player.getWorld();*/
-        //? } else {
-        World level = player.getEntityWorld();
-        //? }
+        @SuppressWarnings("DataFlowIssue") ServerPlayer player = (ServerPlayer) (Object) this;
+        Level level = player.level();
 
-        if (player.isSneaking() || player.isSprinting()) {
+        if (player.isCrouching() || player.isSprinting()) {
             if (ModConfig.shouldTwerk() && level.getRandom().nextDouble() < ModConfig.getRandomSpeed() && JAGAHM.tickCounter >= ModConfig.getGrowSpeed()) {
-                if (level.isClient()) {
+                if (level.isClientSide()) {
                     return;
                 }
                 JAGAHM.tickCounter = 0;
                 JAGAHM.applyGrowing(player);
             }
-            if (player.isSneaking()) {
+            if (player.isCrouching()) {
                 JAGAHM.doPooping(level, player);
             }
             JAGAHM.tickCounter++;

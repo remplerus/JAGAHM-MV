@@ -1,10 +1,10 @@
 plugins {
+    id("net.fabricmc.fabric-loom")
     `maven-publish`
-    id("fabric-loom")
-    id("me.modmuss50.mod-publish-plugin") version("1.1.+")
+    id("me.modmuss50.mod-publish-plugin")
 }
 
-version = "${property("mod.version")}-${property("mod_loader")}-${stonecutter.current.version}"
+version = "${property("mod.version")}+${sc.current.version}"
 base.archivesName = property("mod.id") as String
 
 repositories {
@@ -18,26 +18,18 @@ repositories {
     }
     strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
-    strictMaven("https://maven.shedaniel.me", "Shedaniel", "me.shedaniel.cloth")
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${stonecutter.current.version}")
-    mappings("net.fabricmc:yarn:${property("deps.yarn")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${property("deps.cloth_config")}") {
-        exclude("net.fabricmc.fabric-api")
-    }
+    minecraft("com.mojang:minecraft:${sc.current.version}")
+    implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 }
 
 loom {
-    @Suppress("UnstableApiUsage")
-    mixin {
-        this.defaultRefmapName.set("${property("mod.id")}.refmap.json")
-        useLegacyMixinAp = false
-    }
+    fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json") // Useful for interface injection
+
     decompilerOptions.named("vineflower") {
         options.put("mark-corresponding-synthetics", "1") // Adds names to lambdas - useful for mixins
     }
@@ -51,12 +43,8 @@ loom {
 
 java {
     withSourcesJar()
-    val requiresJava21: Boolean = stonecutter.eval(stonecutter.current.version, ">=1.20.6")
-    val javaVersion: JavaVersion =
-        if (requiresJava21) JavaVersion.VERSION_21
-        else JavaVersion.VERSION_17
-    targetCompatibility = javaVersion
-    sourceCompatibility = javaVersion
+    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 tasks {
@@ -78,20 +66,23 @@ tasks {
         )
 
         filesMatching("fabric.mod.json") { expand(props) }
+
+        val mixinJava = "JAVA_25"
+        filesMatching("*.mixins.json") { expand("java" to mixinJava) }
     }
 
     // Builds the version into a shared folder in `build/libs/${mod version}/`
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
+        from(jar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
 }
 
 publishMods {
-    file = tasks.remapJar.map { it.archiveFile.get() }
-    additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
+    file = tasks.jar.map { it.archiveFile.get() }
+    additionalFiles.from(tasks.jar.map { it.archiveFile.get() })
     displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
     version = property("mod.version") as String
     changelog = rootProject.file("CHANGELOG.md").readText()
@@ -99,7 +90,7 @@ publishMods {
     modLoaders.add("fabric")
 
     dryRun = providers.gradleProperty("MODRINTH_TOKEN").getOrNull() == null
-        || providers.gradleProperty("CURSEFORGE_TOKEN").getOrNull() == null
+            || providers.gradleProperty("CURSEFORGE_TOKEN").getOrNull() == null
 
     modrinth {
         projectId = property("publish.modrinth") as String

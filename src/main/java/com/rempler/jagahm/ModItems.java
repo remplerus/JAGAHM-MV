@@ -1,34 +1,22 @@
 package com.rempler.jagahm;
 
-import net.minecraft.item.Item;
-//? if >1.21.1 {
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-//? } else {
-/*import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;*/
-//? }
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 
 import java.util.function.Function;
 
 public class ModItems {
-    public static final Item POOP = //? if <1.21.2 {
-    /* registerItem("poop", new PoopItem()); */
-    //? } else {
-        registerItem("poop", PoopItem::new, new Item.Settings().maxCount(64));
-    //? }
+    public static final Item POOP = registerItem("poop", PoopItem::new, new Item.Properties().stacksTo(64));
 
-    //? if <1.21.2 {
-    /*public static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, JAGAHM.id(JAGAHM.MODID, name), item);
-    }*/
-    //? } else {
-    public static Item registerItem(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {
-        RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, JAGAHM.id(JAGAHM.MODID, name));
-        return Items.register(itemKey, itemFactory, settings.registryKey(itemKey));
+    public static Item registerItem(String name, Function<Item.Properties, Item> itemFactory, Item.Properties settings) {
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, JAGAHM.id(JAGAHM.MODID, name));
+        Item item = itemFactory.apply(settings.setId(itemKey));
+        Registry.register(BuiltInRegistries.ITEM, itemKey, item);
+        return item;
     }
-    //? }
 
     public static void registerModItems() {
         JAGAHM.LOGGER.info("Registering Mod Items for " + JAGAHM.MODID);

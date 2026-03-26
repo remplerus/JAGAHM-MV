@@ -27,7 +27,6 @@
   "depends": {
     "fabricloader": ">=0.17",
     "minecraft": "${minecraft}",
-    "fabric-api": "${fapi}",
-    "cloth-config": "${cloth}"
+    "fabric-api": "${fapi}"
   }
 }
