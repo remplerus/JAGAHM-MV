@@ -82,7 +82,6 @@ tasks {
 
 publishMods {
     file = tasks.jar.map { it.archiveFile.get() }
-    additionalFiles.from(tasks.jar.map { it.archiveFile.get() })
     displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
     version = property("mod.version") as String
     changelog = rootProject.file("CHANGELOG.md").readText()
