@@ -4,7 +4,7 @@ plugins {
     id("me.modmuss50.mod-publish-plugin")
 }
 
-version = "${property("mod.version")}+${sc.current.version}"
+version = "${property("mod.version")}-fabric-${sc.current.version}"
 base.archivesName = property("mod.id") as String
 
 repositories {
