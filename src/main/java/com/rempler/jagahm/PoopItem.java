@@ -8,7 +8,7 @@ public class PoopItem extends BoneMealItem {
     public PoopItem() {
         //? if >1.21.1 {
         super(new Properties().stacksTo(64).setId(ResourceKey.create(Registries.ITEM, JAGAHM.rl("poop"))));
-        //? } else {
+        //?} else {
         /*super(new Properties().stacksTo(64));*/
         //?}
     }

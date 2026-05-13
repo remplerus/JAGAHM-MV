@@ -7,10 +7,11 @@ plugins {
 }
 
 stonecutter {
-    def agricraft = property("agricraft_version") != null
-    constants["agricraft"] = agricraft
-    def mysticalagriculture = property("mysticalagriculture_version") != null
-    constants["mysticalagriculture"] = mysticalagriculture
+    def agricraft = findProperty("agricraft_version")?.toString()?.trim()
+    constants["agricraft"] = (agricraft != null && !agricraft.isEmpty())
+
+    def mysticalagriculture = findProperty("mysticalagriculture_version")?.toString()?.trim()
+    constants["mysticalagriculture"] = (mysticalagriculture != null && !mysticalagriculture.isEmpty())
 }
 
 version = "${property("mod_version")}-${property("mod_loader")}-${stonecutter.current.version}"
@@ -26,11 +27,22 @@ java {
 }
 
 repositories {
-
+    maven {
+        url = "https://maven.blakesmods.com"
+    }
+    maven {
+        url = "https://cursemaven.com"
+    }
+    maven {
+        url = "https://maven.blamejared.com"
+    }
 }
 
 dependencies {
-
+    def mysticalVersion = findProperty("mysticalagriculture_version")?.toString()?.trim()
+    if (mysticalVersion) {
+        implementation "com.blakebr0.mysticalagriculture:MysticalAgriculture:${stonecutter.current.version}-${mysticalagriculture_version}"
+    }
 }
 
 neoForge {

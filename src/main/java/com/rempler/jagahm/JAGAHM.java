@@ -1,5 +1,6 @@
 package com.rempler.jagahm;
 
+import com.rempler.jagahm.compat.MysticalAgriCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
@@ -40,12 +42,12 @@ import org.slf4j.LoggerFactory;
 //? if <1.21.3 {
 /*import net.neoforged.fml.ModLoadingContext;
 import net.minecraft.server.level.ServerPlayer;*/
-//? }
+//?}
 //? if < 1.21.11 {
-import net.minecraft.resources.ResourceLocation;
-//? } else {
-/*import net.minecraft.resources.Identifier;*/
-//? }
+/*import net.minecraft.resources.ResourceLocation;
+*///?} else {
+import net.minecraft.resources.Identifier;
+//?}
 
 @Mod(JAGAHM.MOD_ID)
 public class JAGAHM {
@@ -63,9 +65,9 @@ public class JAGAHM {
     public JAGAHM(IEventBus eventBus, ModContainer modContainer) {
         //? if <1.20.6 {
         /*ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC, MOD_ID + ".toml");*/
-        //? } else {
+        //?} else {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, MOD_ID + ".toml");
-        //? }
+        //?}
         NeoForge.EVENT_BUS.addListener(JAGAHMEvents::playerTickEvent);
         NeoForge.EVENT_BUS.addListener(JAGAHMEvents::onRightClickBlockEvent);
         NeoForge.EVENT_BUS.addListener(JAGAHMEvents::onBonemealEvent);
@@ -73,14 +75,14 @@ public class JAGAHM {
         ITEMS.register(eventBus);
     }
 
-    public static /*? if <1.21.11 {*/ResourceLocation/*? } else { *//*Identifier*//*?}*/ rl(String name) {
+    public static /*? if <1.21.11 {*//*ResourceLocation*//*?} else {*/Identifier/*?}*/ rl(String name) {
         //? if <1.21 {
         /*return new ResourceLocation(MOD_ID, name);*/
-        //? } else if >=1.21.11 {
-        /*return Identifier.fromNamespaceAndPath(MOD_ID, name);*/
-        //? } else {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
-        //? }
+        //?} else if >=1.21.11 {
+        return Identifier.fromNamespaceAndPath(MOD_ID, name);
+        //?} else {
+        /*return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+        *///?}
     }
 
     public static BlockState getReplantState(BlockState state) {
@@ -99,9 +101,9 @@ public class JAGAHM {
                                   ItemStack toolStack) {
         //? if <1.21.3 {
         /*Item replant = state.getBlock().getCloneItemStack(level, pos, state).getItem();*/
-        //? } else {
+        //?} else {
         Item replant = state.getBlock().getCloneItemStack(level, pos, state, true, null).getItem();
-        //? }
+        //?}
         final boolean[] removedReplant = { false };
         Block.getDrops(state, level, pos, null, entity, toolStack).forEach(stack -> {
             if (!removedReplant[0] && stack.getItem() == replant) {
@@ -126,7 +128,7 @@ public class JAGAHM {
             return state.getValue(SugarCaneBlock.AGE) >= BlockStateProperties.MAX_AGE_15;
         }
         return false;*/
-        //? } else {
+        //?} else {
         return switch (block) {
             case CocoaBlock ignored -> state.getValue(CocoaBlock.AGE) >= CocoaBlock.MAX_AGE;
             case CropBlock cropBlock -> cropBlock.isMaxAge(state);
@@ -134,7 +136,7 @@ public class JAGAHM {
             case SugarCaneBlock ignored -> state.getValue(SugarCaneBlock.AGE) >= BlockStateProperties.MAX_AGE_15;
             default -> false;
         };
-        //? }
+        //?}
     }
 
     public static InteractionResult onRightClick(Player player, InteractionHand hand, Level level, BlockHitResult blockHit) {
@@ -192,10 +194,10 @@ public class JAGAHM {
             //? if <1.21.3 {
             /*((ServerLevel) level).sendParticles((ServerPlayer) player, ParticleTypes.CLOUD, false, blockPos.getX() + d0,
                     blockPos.getY() + d0, blockPos.getZ() + d0, 1, 0.5, 0.5, 0.5, 0.01);*/
-            //? } else {
+            //?} else {
             ((ServerLevel) level).sendParticles(ParticleTypes.CLOUD, false, false, blockPos.getX() + d0,
                     blockPos.getY() + d0, blockPos.getZ() + d0, 1, 0.5, 0.5, 0.5, 0.01);
-            //? }
+            //?}
         }
     }
 
@@ -230,6 +232,9 @@ public class JAGAHM {
             if (JAGAHM.isMature(state)) {
                 return;
             }
+            if (ModList.get().isLoaded("mysticalagriculture") && Config.activateAgriCraft()) {
+                MysticalAgriCompat.initMysticalAgriCompat((Level) level, blockPos, state, player);
+            }
             BoneMealItem.applyBonemeal(POOP.get().getDefaultInstance(), (Level) level, blockPos, player);
             spawnParticles(player, level, blockPos);
         } else if (state.getBlock() instanceof BonemealableBlock) {
@@ -241,9 +246,9 @@ public class JAGAHM {
                     ((Level) level).setBlockAndUpdate(blockPos.above(), state.setValue(SugarCaneBlock.AGE, 0));
                     //? if <1.20.6 {
                     /*net.neoforged.neoforge.common.CommonHooks.onCropsGrowPost((Level) level, blockPos.above(), state);*/
-                    //? } else {
+                    //?} else {
                     net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost((Level) level, blockPos.above(), state);
-                    //? }
+                    //?}
                     level.setBlock(blockPos, state.setValue(SugarCaneBlock.AGE, 0), 4);
                 } else {
                     int newAge = j + 5;
