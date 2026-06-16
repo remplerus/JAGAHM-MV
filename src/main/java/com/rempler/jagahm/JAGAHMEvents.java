@@ -1,6 +1,7 @@
 package com.rempler.jagahm;
 
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -62,7 +63,7 @@ public class JAGAHMEvents {
             //? if <1.20.6 {
             /*if (!(event.getBlock().is(BlockTags.CROPS) || event.getBlock().is(BlockTags.SAPLINGS) || event.getBlock().is(JAGAHM.WHITELIST))) {*/
             //?} else {
-            if (!(event.getState().is(BlockTags.CROPS) || event.getState().is(BlockTags.SAPLINGS) || event.getState().is(JAGAHM.WHITELIST))) {
+            if (!(event.getState().is(BlockTags.CROPS) || event.getState().is(/*? if >26.1.2 {*//*BlockTags.SAPLINGS*//*?} else {*/BlockItemTags.SAPLINGS.block()/*?}*/) || event.getState().is(JAGAHM.WHITELIST))) {
             //?}
                 event.setCanceled(true);
             }
