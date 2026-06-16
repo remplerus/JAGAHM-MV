@@ -3,6 +3,9 @@ package com.rempler.jagahm.mixin;
 import com.rempler.jagahm.JAGAHM;
 import com.rempler.jagahm.ModItems;
 import net.minecraft.core.BlockPos;
+//? if >26.1.2 {
+import net.minecraft.tags.BlockItemTags;
+//?}
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +22,7 @@ public class BoneMealItemMixin {
     private static void onUseOnFertilizable(ItemStack stack, Level level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         BlockState blockState = level.getBlockState(pos);
         if (stack.is(ModItems.POOP)) { //TODO: Check if this works
-            if (!(blockState.is(BlockTags.CROPS) /*|| blockState.is(BlockTags.SAPLINGS)*/ || blockState.is(JAGAHM.WHITELIST))) {
+            if (!(blockState.is(BlockTags.CROPS) || blockState.is(/*? if <26.1.2 {*//*BlockTags.SAPLINGS*//*?} else {*/BlockItemTags.SAPLINGS.block()/*?}*/) || blockState.is(JAGAHM.WHITELIST))) {
                 cir.setReturnValue(false);
             }
         }

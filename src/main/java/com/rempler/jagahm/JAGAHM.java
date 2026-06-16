@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JAGAHM implements ModInitializer {
-    public static final String VERSION = /*$ mod_version*/ "2.0.0";
-    public static final String MINECRAFT = /*$ minecraft*/ "1.21.10";
+    public static final String VERSION = /*$ mod_version*/ "5.0.1";
+    public static final String MINECRAFT = /*$ minecraft*/ "26.2";
     public static final String MODID = "jagahm";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final TagKey<Block> WHITELIST = TagKey.create(Registries.BLOCK, id(MODID, "whitelist"));
