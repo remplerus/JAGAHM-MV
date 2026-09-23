@@ -1,10 +1,10 @@
 plugins {
     id("dev.kikugie.stonecutter")
-    id("net.fabricmc.fabric-loom") version "1.15-SNAPSHOT" apply false
-    id("me.modmuss50.mod-publish-plugin") version "1.1.+" apply false // Publishes builds to hosting websites
+    id("net.fabricmc.fabric-loom") version "1.18-SNAPSHOT" apply false
+    id("me.modmuss50.mod-publish-plugin") version "2.+" apply false // Publishes builds to hosting websites
 }
 
-stonecutter active "26.2"
+stonecutter active "26.3"
 
 // Make newer versions be published last
 stonecutter tasks {

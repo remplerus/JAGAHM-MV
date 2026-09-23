@@ -104,6 +104,8 @@ publishMods {
         projectId = property("publish.curseforge") as String
         accessToken = providers.gradleProperty("CURSEFORGE_TOKEN")
         minecraftVersions.add(stonecutter.current.version)
+        client = true
+        server = true
         requires {
             slug = "fabric-api"
         }
